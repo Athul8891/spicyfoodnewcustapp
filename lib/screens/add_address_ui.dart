@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
@@ -22,9 +24,11 @@ class _AddAddressUIState extends State<AddAddressUI> {
   TextEditingController unitController = TextEditingController();
   TextEditingController landmarkController = TextEditingController();
 
+
   @override
   void initState() {
 this. _getLocation();
+
   }
 
   _getLocation() async {
@@ -92,6 +96,8 @@ this. _getLocation();
 
 
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -262,7 +268,16 @@ this. _getLocation();
                       onPressed: () async {
                         var rsp =await addAdd(currentLat,currentLon,currentLoc,landmarkController.text.toString(),unitController.text.toString());
                         if(rsp=="SUCCESS"){
-                          showToastSuccess("Adress added sucssesfully");
+                          showToastSuccess("Address added sucssesfully");
+
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.setString("long",
+                              selectedPlace.geometry.location.lng.toString());
+                          prefs.setString("lat",
+                              selectedPlace.geometry.location.lat.toString());
+                          prefs.setString("currentLoc",
+                              selectedPlace.formattedAddress.toString());
                         }else{
                           showToastError("Failed to add!");
 
