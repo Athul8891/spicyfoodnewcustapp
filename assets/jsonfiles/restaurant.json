@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Joshi Bhojnalya",
+    "thumb": "assets/images/restaurants/r5.jpeg",
+    "cuisines": "Mexican, Salad, Fast Food, North Indian",
+    "ready_duration": "25 mins",
+    "offer": "30 % OFF up to ₹199",
+    "rating": "4.5",
+    "isOpen": true
+  },
+  {
+    "title": "Burger King",
+    "thumb": "assets/images/restaurants/r2.jpeg",
+    "cuisines": "Burger, Fast Food, Mexican, Pizza",
+    "ready_duration": "15 mins",
+    "offer": "45 % OFF up to ₹99",
+    "rating": "4.0",
+    "isOpen": true
+  },
+  {
+    "title": "Aroma",
+    "thumb": "assets/images/restaurants/r3.jpg",
+    "cuisines": "Chinese, BBQ, Fast Food, North Indian",
+    "ready_duration": "25 mins",
+    "offer": "40 % OFF up to ₹199",
+    "rating": "4.0",
+    "isOpen": false
+  },
+  {
+    "title": "Grill Master",
+    "thumb": "assets/images/restaurants/r4.jpeg",
+    "cuisines": "Burger, Sandwiches, Wraps",
+    "ready_duration": "28 mins",
+    "offer": "50 % OFF up to ₹99",
+    "rating": "4.3",
+    "isOpen": true
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "724494152076",
+    "project_id": "spicyfoodnew",
+    "storage_bucket": "spicyfoodnew.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724494152076:android:84edc3aba05fbad6dea6a9",
+        "android_client_info": {
+          "package_name": "com.online.spicyfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724494152076-ep2jagaqc73bvv0hunm68o41561u2uj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtpnAxXu5QcCAdxF4eb3-2vG8Js8qd80U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724494152076-ep2jagaqc73bvv0hunm68o41561u2uj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

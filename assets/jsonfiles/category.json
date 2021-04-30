@@ -1,0 +1,27 @@
+[
+  {
+    "id": 2,
+    "title": "Dal",
+    "thumb":"assets/images/cat_images/dal.png"
+  },
+  {
+    "id": 3,
+    "title": "Dosa",
+    "thumb":"assets/images/cat_images/dosa.png"
+  },
+  {
+    "id": 4,
+    "title": "Paratha",
+    "thumb":"assets/images/cat_images/paratha.jpg"
+  },
+  {
+    "id": 5,
+    "title": "Cold Coffee",
+    "thumb":"assets/images/cat_images/cold_coffee.jpeg"
+  },
+  {
+    "id": 6,
+    "title": "Pasta",
+    "thumb":"assets/images/cat_images/pasta.png"
+  }
+]
