@@ -1,5 +1,5 @@
-import 'package:zomatoui/resources.dart';
 import 'package:flutter/material.dart';
+import 'package:zomatoui/resources.dart';
 
 class OffersUI extends StatefulWidget {
   final title;
@@ -97,14 +97,14 @@ class _OffersUIState extends State<OffersUI> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                  border:
-                                      Border.all(width: 1, color: Colors.orange),
+                                  border: Border.all(
+                                      width: 1, color: Colors.orange),
                                   color: Colors.orange[50].withOpacity(0.99)),
                               width: 100,
                               child: Center(
                                 child: Padding(
                                   padding: const EdgeInsets.all(6.0),
-                                  child: Text(
+                                  child: SelectableText(
                                     "comida50".toUpperCase(),
                                     style: TextStyle(
                                         fontFamily: 'Poppins',
@@ -119,14 +119,15 @@ class _OffersUIState extends State<OffersUI> {
                             Visibility(
                               visible: widget.isApplyCoupon,
                               child: TextButton(
-                                onPressed: (){
-
-                                },
-                                child: Text("Apply".toUpperCase(),style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.orange[700],
-                                ),),
+                                onPressed: () {},
+                                child: Text(
+                                  "Apply".toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.orange[700],
+                                  ),
+                                ),
                               ),
                             )
                           ],

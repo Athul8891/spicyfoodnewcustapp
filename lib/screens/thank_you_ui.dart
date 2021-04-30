@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../resources.dart';
+import 'fregment_container.dart';
 
 class ThankYouUI extends StatefulWidget {
   final title;
@@ -22,36 +23,62 @@ class _ThankYouUIState extends State<ThankYouUI> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(width: 60,child: IconButton(icon: Icon(Icons.close,size: 25,), onPressed: (){
-              Navigator.of(context).pop();
-            })),
+            // SizedBox(
+            //     width: 60,
+            //     child: IconButton(
+            //         icon: Icon(
+            //           Icons.close,
+            //           size: 25,
+            //         ),
+            //         onPressed: () {
+            //           Navigator.of(context).pop();
+            //         })),
             Expanded(
               flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Thank you",style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 32,
-                      letterSpacing: 0.6,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w700
-                  ),),
-                  SizedBox(height: 16,),
+                  Text(
+                    "Thank you",
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 32,
+                        letterSpacing: 0.6,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
                   Lottie.asset(
                     "assets/anim/smile.json",
                     repeat: true,
                     width: MediaQuery.of(context).size.width,
                     height: 200,
                   ),
-                  SizedBox(height: 40,),
-                  Text("Yeh !",style: appbar,),
-                  Text(widget.title,style: Theme.of(context).textTheme.headline6,),
-                  SizedBox(height: 40,),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    "Yeh !",
+                    style: appbar,
+                  ),
+                  Text(
+                    widget.title,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
                   TextButton(
-                    style:outLineBtn,
+                    style: outLineBtn,
                     onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  FragmentContainer()));
                     },
                     child: Text(
                       "continue".toUpperCase(),

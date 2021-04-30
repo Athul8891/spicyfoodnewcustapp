@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:zomatoui/resources.dart';
 import 'package:flutter/material.dart';
+import 'package:zomatoui/resources.dart';
 
 import 'common.dart';
 import 'list_item/flat_item.dart';
@@ -15,6 +15,7 @@ class FavouriteFragment extends StatefulWidget {
 }
 
 class _FavouriteFragmentState extends State<FavouriteFragment> {
+  // var pgLoad = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,8 +50,7 @@ class _FavouriteFragmentState extends State<FavouriteFragment> {
                       cuisines: restaurantList[index]['cuisines'],
                       offer: restaurantList[index]['offer'],
                       rating: restaurantList[index]['rating'],
-                      readyDuration: restaurantList[index]
-                      ['ready_duration'],
+                      readyDuration: restaurantList[index]['ready_duration'],
                       isOpen: restaurantList[index]['isOpen'],
                       isFav: true,
                     );

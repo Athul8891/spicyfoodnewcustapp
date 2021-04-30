@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/Api/pureVeg.dart';
 import 'package:zomatoui/Api/storesNear.dart';
 import 'package:zomatoui/Api/trendingList.dart';
-import 'package:zomatoui/common.dart';
 import 'package:zomatoui/list_item/category_item.dart';
 import 'package:zomatoui/list_item/flat_item.dart';
 import 'package:zomatoui/list_item/veg_items.dart';
@@ -15,8 +16,6 @@ import 'package:zomatoui/resources.dart';
 import 'package:zomatoui/screens/offers_ui.dart';
 import 'package:zomatoui/screens/popular_cuisines_ui.dart';
 import 'package:zomatoui/screens/search_ui.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'helper/page_transation_fade_animation.dart';
 
@@ -117,7 +116,7 @@ class _HomeFragmentState extends State<HomeFragment>
   void initState() {
     super.initState();
     this.getStores();
-    this. _getLocation();
+    this._getLocation();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     setState(() {
@@ -148,6 +147,7 @@ class _HomeFragmentState extends State<HomeFragment>
       }
     });
   }
+
   _getLocation() async {
     var prefs = await SharedPreferences.getInstance();
 
@@ -159,20 +159,23 @@ class _HomeFragmentState extends State<HomeFragment>
     });
 
     print("strId");
-    print(strLong);}
+    print(strLong);
+  }
+
   Future<String> getStores() async {
     var rspstore = await storeNearApi();
     var rspveg = await pureVegApi();
     var rsptrend = await trendingList();
-   setState(() {
-     arrStoreList =rspstore['data'];
-     arrVegList =rspveg['data'];
-     arrTrendingList =rsptrend;
-   });
+    setState(() {
+      arrStoreList = rspstore['data'];
+      arrVegList = rspveg['data'];
+      arrTrendingList = rsptrend;
+    });
 
     print("storessssssssss");
     print(rspstore);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -330,9 +333,12 @@ class _HomeFragmentState extends State<HomeFragment>
                       //itemCount: showJsonData.length,
                       physics: BouncingScrollPhysics(),
                       padding: EdgeInsets.only(left: 12),
-                      itemCount: arrTrendingList != null ? arrTrendingList.length : 0,
+                      itemCount:
+                          arrTrendingList != null ? arrTrendingList.length : 0,
                       itemBuilder: (context, index) {
-                        final item = arrTrendingList != null ? arrTrendingList[index] : null;
+                        final item = arrTrendingList != null
+                            ? arrTrendingList[index]
+                            : null;
                         print("itemmmmmmmmmmmmmmmmmmmmm");
                         print(item);
                         return Category(
@@ -429,13 +435,14 @@ class _HomeFragmentState extends State<HomeFragment>
                   removeTop: true,
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
-                  //  itemCount: 2,
+                    //  itemCount: 2,
                     shrinkWrap: true,
                     physics: ClampingScrollPhysics(),
                     itemCount: arrVegList != null ? arrVegList.length : 0,
                     itemBuilder: (context, index) {
-                      final item = arrVegList != null ? arrVegList[index] : null;
-                      return VegItems(data:item);
+                      final item =
+                          arrVegList != null ? arrVegList[index] : null;
+                      return VegItems(data: item);
                     },
                   ),
                 ),
@@ -457,7 +464,7 @@ class _HomeFragmentState extends State<HomeFragment>
             SliverToBoxAdapter(
               child: FutureBuilder(
                 builder: (context, snapshot) {
-                //  var restaurantList = json.decode(snapshot.data.toString());
+                  //  var restaurantList = json.decode(snapshot.data.toString());
                   if (snapshot.hasData) {
                     return Container(
                       color: Colors.white,
@@ -465,28 +472,30 @@ class _HomeFragmentState extends State<HomeFragment>
                         removeTop: true,
                         context: context,
                         child: ListView.builder(
-                         // itemCount: arrStoreList.length,
+                          // itemCount: arrStoreList.length,
                           shrinkWrap: true,
                           physics: BouncingScrollPhysics(),
-                          itemCount: arrStoreList != null ? arrStoreList.length : 0,
+                          itemCount:
+                              arrStoreList != null ? arrStoreList.length : 0,
                           itemBuilder: (context, index) {
-                            final item = arrStoreList != null ? arrStoreList[index] : null;
+                            final item = arrStoreList != null
+                                ? arrStoreList[index]
+                                : null;
                             //RestaurantsModel model = restaurantList[index];
 
-                             // Common.totalRestaurants = arrStoreList.length;
-
+                            // Common.totalRestaurants = arrStoreList.length;
 
                             print("daaaaaaaata");
                             print(item['store_sub_type']);
                             return FlatItem(
-                              id:item['id'],
+                              id: item['id'],
                               title: item['store_name'],
-                              thumb:item['logo'],
+                              thumb: item['logo'],
                               cuisines: item['store_sub_type'],
                               offer: item['offer_percentage'],
                               rating: item['rating'],
                               readyDuration: item['approximate_delivery_time'],
-                              isOpen:  item['logo'],
+                              isOpen: item['logo'],
                               isFav: false,
                             );
                           },
@@ -504,4 +513,3 @@ class _HomeFragmentState extends State<HomeFragment>
         ));
   }
 }
-

@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:indexed_list_view/indexed_list_view.dart';
 
-
 class IndexJump extends StatelessWidget {
-  static IndexedScrollController controller = IndexedScrollController(initialIndex: 75);
+  static IndexedScrollController controller =
+      IndexedScrollController(initialIndex: 75);
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +32,20 @@ class IndexJump extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    button("jumpToIndex(-42)", () => controller.jumpToIndex(-42)),
-                    button("jumpToIndex(750000)", () => controller.jumpToIndex(750000)),
+                    button(
+                        "jumpToIndex(-42)", () => controller.jumpToIndex(-42)),
+                    button("jumpToIndex(750000)",
+                        () => controller.jumpToIndex(750000)),
                   ],
                 ),
                 // ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    button("animateToIndex(-42)", () => controller.animateToIndex(-42)),
-                    button("animateToIndex(750000)", () => controller.animateToIndex(750000)),
+                    button("animateToIndex(-42)",
+                        () => controller.animateToIndex(-42)),
+                    button("animateToIndex(750000)",
+                        () => controller.animateToIndex(750000)),
                   ],
                 ),
                 // ---
@@ -65,16 +69,20 @@ class IndexJump extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    button("jumpToRelative(-250px)", () => controller.jumpToRelative(-250)),
-                    button("jumpToRelative(40px)", () => controller.jumpToRelative(40)),
+                    button("jumpToRelative(-250px)",
+                        () => controller.jumpToRelative(-250)),
+                    button("jumpToRelative(40px)",
+                        () => controller.jumpToRelative(40)),
                   ],
                 ),
                 // ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    button("animateToRelative(-250px)", () => controller.animateToRelative(-250)),
-                    button("animateToRelative(40px)", () => controller.animateToRelative(40)),
+                    button("animateToRelative(-250px)",
+                        () => controller.animateToRelative(-250)),
+                    button("animateToRelative(40px)",
+                        () => controller.animateToRelative(40)),
                   ],
                 ),
               ],
@@ -86,24 +94,22 @@ class IndexJump extends StatelessWidget {
   }
 
   Widget button(String text, VoidCallback function) => Padding(
-    padding: const EdgeInsets.all(4.0),
-    child: RawMaterialButton(
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      padding: const EdgeInsets.all(10.0),
-      fillColor: Colors.blue,
-      constraints: const BoxConstraints(minWidth: 88.0, minHeight: 30.0),
-      onPressed: function,
-      child: Text(text, style: const TextStyle(fontSize: 12)),
-    ),
-  );
+        padding: const EdgeInsets.all(4.0),
+        child: RawMaterialButton(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.all(10.0),
+          fillColor: Colors.blue,
+          constraints: const BoxConstraints(minWidth: 88.0, minHeight: 30.0),
+          onPressed: function,
+          child: Text(text, style: const TextStyle(fontSize: 12)),
+        ),
+      );
 
-  IndexedWidgetBuilderOrNull itemBuilder() {
-    //
-    final List<double> heights =
-    List<double>.generate(527, (i) => Random().nextInt(200).toDouble() + 30.0);
-
+  // IndexedWidgetBuilderOrNull
+  itemBuilder() {
+    final List<double> heights = List<double>.generate(
+        527, (i) => Random().nextInt(200).toDouble() + 30.0);
     return (BuildContext context, int index) {
-      //
       return Card(
         child: Container(
           height: heights[index % 200],
