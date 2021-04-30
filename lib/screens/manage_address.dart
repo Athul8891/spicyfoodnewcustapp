@@ -1,5 +1,10 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zomatoui/Api/FirebaseApi.dart';
 import 'package:zomatoui/helper/page_transation_fade_animation.dart';
+import 'package:zomatoui/helper/snackbar_toast_helper.dart';
 import 'package:zomatoui/resources.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +20,42 @@ class ManageAddress extends StatefulWidget {
 }
 
 class _ManageAddressState extends State<ManageAddress> {
+  var cartItems=[];
+
+  @override
+  void initState() {
+    this. getAllCartItems();
+  }
+  void  getAllCartItems()async{
+    cartItems.clear();
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    final User user = firebaseAuth.currentUser;
+    final uid = user.uid;
+
+    FirebaseFirestore.instance.collection("address").doc(uid).collection(uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        // print("doc");
+        setState(() {
+
+          cartItems.add({'id': doc.reference.toString(),'adress': doc.get('adress'),'landmark': doc.get('landmark'),'lat': doc.get('lat'),'long': doc.get('long'),'unit': doc.get('unit'),  });
+        });
+      })
+    }).whenComplete(()async{
+
+
+
+    });
+
+
+
+
+
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,11 +100,13 @@ class _ManageAddressState extends State<ManageAddress> {
           ListView.builder(
             physics: BouncingScrollPhysics(),
             shrinkWrap: true,
-            itemCount: 2,
+           // itemCount: 2,
             padding: EdgeInsets.only(top:12.0),
-            itemBuilder: (_, index) {
+            itemCount: cartItems != null ? cartItems.length : 0,
+            itemBuilder: (context, index) {
+              final item  = cartItems != null ? cartItems[index] : null;
               return Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,11 +121,11 @@ class _ManageAddressState extends State<ManageAddress> {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Home",
+                              item['unit'].toString(),
                               style: titleBold,
                             ),
                             Text(
-                              address,
+                              item['adress'].toString() +"\n"+item['landmark'].toString(),
                               style: Theme.of(context).textTheme.subtitle2,
                             ),
                             Row(
@@ -93,16 +136,25 @@ class _ManageAddressState extends State<ManageAddress> {
                                   width: 80,
                                   height: 30,
                                   child: TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        FadeRoute(
-                                          page: AddAddressUI(),
-                                        ),
-                                      );
+                                    onPressed: () async {
+                                      SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                      prefs.setString("long",
+                                          item['long'].toString());
+                                      prefs.setString("lat",
+                                          item['lat'].toString());
+                                      prefs.setString("currentLoc",
+                                          item['adress'].toString());
+
+                                      // Navigator.push(
+                                      //   context,
+                                      //   FadeRoute(
+                                      //     page: AddAddressUI(),
+                                      //   ),
+                                      // );
                                     },
                                     child: Text(
-                                      "EDIT",
+                                      "SET AS DEFAULT",
                                       style: TextStyle(color: Colors.deepOrange),
                                     ),
                                   ),
@@ -111,7 +163,17 @@ class _ManageAddressState extends State<ManageAddress> {
                                   width: 80,
                                   height: 30,
                                   child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: ()async {
+                                     var rsp = dltAdd(item['id'].toString());
+                                     
+                                     if(rsp == "SUCCESS"){
+                                       showToastSuccess("Successfully removed");
+                                       getAllCartItems();
+                                     }else{
+                                       
+                                     }
+
+                                    },
                                     child: Text(
                                       "DELETE",
                                       style: TextStyle(color: Colors.deepOrange),
@@ -121,7 +183,7 @@ class _ManageAddressState extends State<ManageAddress> {
 
                               ],
                             ),
-                            SizedBox(height: 6,),
+                            SizedBox(height: 2,),
                             Divider()
                           ]
                       ),),
@@ -134,4 +196,6 @@ class _ManageAddressState extends State<ManageAddress> {
       ),
     );
   }
+
+
 }

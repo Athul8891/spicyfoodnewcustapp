@@ -59,7 +59,7 @@ this.getAllCartItems();
       querySnapshot.docs.forEach((doc) {
         // print("doc");
         setState(() {
-          cartItems.add({'variation_id': doc.get('variation_id'),  'quantity': int.parse(doc.get('quantity').toString())});
+          cartItems.add({'id': doc.reference.toString(), 'variation_id': doc.get('variation_id'),  'quantity': int.parse(doc.get('quantity').toString())});
         });
       })
     }).whenComplete(()async{
@@ -160,7 +160,14 @@ this.getAllCartItems();
                                 Expanded(
                                   flex: 1,
                                   child: TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+
+                                        if(arrList[index]['quantity']<=1)
+                                        setState(() {
+                                          arrList[index]['quantity']++ ;
+                                        });
+
+                                      },
                                       child: Icon(
                                         Icons.remove,
                                         color: Colors.green,
@@ -175,7 +182,12 @@ this.getAllCartItems();
                                 Expanded(
                                   flex: 1,
                                   child: TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        setState(() {
+                                          arrList[index]['quantity']++ ;
+                                        });
+
+                                      },
                                       child: Icon(
                                         Icons.add,
                                         color: Colors.green,
