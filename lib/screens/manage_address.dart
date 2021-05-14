@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_id/device_id.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/Api/FirebaseApi.dart';
@@ -21,29 +22,31 @@ class ManageAddress extends StatefulWidget {
 
 class _ManageAddressState extends State<ManageAddress> {
   var cartItems=[];
-
+ var loading = true;
   @override
   void initState() {
     this. getAllCartItems();
   }
   void  getAllCartItems()async{
     cartItems.clear();
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    final User user = firebaseAuth.currentUser;
-    final uid = user.uid;
+    String device_id = await DeviceId.getID;
+    print(device_id);
 
-    FirebaseFirestore.instance.collection("address").doc(uid).collection(uid)
+    FirebaseFirestore.instance.collection("address").doc(device_id).collection(device_id)
         .get()
         .then((QuerySnapshot querySnapshot) => {
       querySnapshot.docs.forEach((doc) {
         // print("doc");
         setState(() {
 
-          cartItems.add({'id': doc.reference.toString(),'adress': doc.get('adress'),'landmark': doc.get('landmark'),'lat': doc.get('lat'),'long': doc.get('long'),'unit': doc.get('unit'),  });
+          cartItems.add({'id': doc.documentID,'adress': doc.get('adress'),'landmark': doc.get('landmark'),'lat': doc.get('lat'),'long': doc.get('long'),'unit': doc.get('unit'),  });
         });
       })
     }).whenComplete(()async{
+      setState(() {
+        loading= false;
 
+      });
 
 
     });
@@ -78,7 +81,14 @@ class _ManageAddressState extends State<ManageAddress> {
           SizedBox(width: 8,),
         ],
       ),
-      body: ListView(
+      body: loading == true
+          ? Center(child: CircularProgressIndicator())
+          :  (cartItems.length==0)
+        ? Center(child: Text("Addresses Not Added Yet!"))
+        :
+
+
+      ListView(
         physics: BouncingScrollPhysics(),
         shrinkWrap: true,
         children: [
@@ -115,9 +125,9 @@ class _ManageAddressState extends State<ManageAddress> {
                       Icons.home_outlined,
                       size: 22,
                     ),
-                    SizedBox(width: 16,),
+                    SizedBox(width: 10,),
                     Expanded(
-                      flex:1,
+                      flex:5,
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -132,52 +142,51 @@ class _ManageAddressState extends State<ManageAddress> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  width: 80,
-                                  height: 30,
-                                  child: TextButton(
-                                    onPressed: () async {
-                                      SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                      prefs.setString("long",
-                                          item['long'].toString());
-                                      prefs.setString("lat",
-                                          item['lat'].toString());
-                                      prefs.setString("currentLoc",
-                                          item['adress'].toString());
+                                TextButton(
+                                  onPressed: () async {
+                                    SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                    prefs.setString("long",
+                                        item['long'].toString());
+                                    prefs.setString("lat",
+                                        item['lat'].toString());
+                                    prefs.setString("currentLoc",
+                                        item['adress'].toString());
 
-                                      // Navigator.push(
-                                      //   context,
-                                      //   FadeRoute(
-                                      //     page: AddAddressUI(),
-                                      //   ),
-                                      // );
-                                    },
-                                    child: Text(
-                                      "SET AS DEFAULT",
-                                      style: TextStyle(color: Colors.deepOrange),
-                                    ),
+
+
+
+                                    showToastSuccess("Selected as default address");
+
+                                    // Navigator.push(
+                                    //   context,
+                                    //   FadeRoute(
+                                    //     page: AddAddressUI(),
+                                    //   ),
+                                    // );
+                                  },
+                                  child: Text(
+                                    "SET AS DEFAULT",
+                                    style: TextStyle(color: Colors.deepOrange),
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 80,
-                                  height: 30,
-                                  child: TextButton(
-                                    onPressed: ()async {
-                                     var rsp = dltAdd(item['id'].toString());
-                                     
-                                     if(rsp == "SUCCESS"){
-                                       showToastSuccess("Successfully removed");
-                                       getAllCartItems();
-                                     }else{
-                                       
-                                     }
+                                  width: 2,
+                                ),
+                                TextButton(
+                                  onPressed: ()async {
+                                    print("ffffffffff");
+                                    print(item['id'].toString());
+                                    var rsp = dltAdd(item['id'].toString());
+                                     print(rsp);
+                                    showToastSuccess("Successfully removed");
+                                    getAllCartItems();
 
-                                    },
-                                    child: Text(
-                                      "DELETE",
-                                      style: TextStyle(color: Colors.deepOrange),
-                                    ),
+
+                                  },
+                                  child: Text(
+                                    "DELETE",
+                                    style: TextStyle(color: Colors.deepOrange),
                                   ),
                                 ),
 

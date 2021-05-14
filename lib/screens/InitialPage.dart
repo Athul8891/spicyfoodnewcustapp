@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/helper/page_transation_fade_animation.dart';
+import 'package:zomatoui/screens/add_address_ui_start.dart';
 
 import '../resources.dart';
 import 'login_ui.dart';
@@ -53,7 +54,7 @@ class _InitialPageState extends State<InitialPage> {
   void initState() {
     super.initState();
     // this.splashMove();
-    this._getLocation();
+  //  this._getLocation();
   }
 
   // splashMove() async {
@@ -189,91 +190,96 @@ class _InitialPageState extends State<InitialPage> {
                       // ));
                       // Navigator.push(context, FadeRoute(page: FragmentContainer()));
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return PlacePicker(
-                              apiKey: "AIzaSyBgeYxBAGlhztMLhUW-bH6lUKiU2pY7Lio",
-                              // initialPosition: MyHomePage.kInitialPosition,
-                              useCurrentLocation: true,
-                              selectInitialPosition: true,
-                              //usePlaceDetailSearch: true,
-                              onPlacePicked: (result) async {
-                                selectedPlace = result;
-                                print("xoxoxoxo");
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return PlacePicker(
+                      //         apiKey: "AIzaSyBgeYxBAGlhztMLhUW-bH6lUKiU2pY7Lio",
+                      //         // initialPosition: MyHomePage.kInitialPosition,
+                      //         useCurrentLocation: true,
+                      //         selectInitialPosition: true,
+                      //         //usePlaceDetailSearch: true,
+                      //         onPlacePicked: (result) async {
+                      //           selectedPlace = result;
+                      //           print("xoxoxoxo");
+                      //
+                      //           print(
+                      //               selectedPlace.geometry.location.lat ?? "");
+                      //           print(
+                      //               selectedPlace.geometry.location.lng ?? "");
+                      //
+                      //           SharedPreferences prefs =
+                      //               await SharedPreferences.getInstance();
+                      //           prefs.setString(
+                      //               "long",
+                      //               selectedPlace.geometry.location.lng
+                      //                   .toString());
+                      //           prefs.setString(
+                      //               "lat",
+                      //               selectedPlace.geometry.location.lat
+                      //                   .toString());
+                      //           prefs.setString("currentLoc",
+                      //               selectedPlace.formattedAddress.toString());
+                      //           Navigator.of(context).pop();
+                      //
+                      //           // Navigator.pushReplacement(
+                      //           //     context,
+                      //           //     MaterialPageRoute(
+                      //           //         builder: (BuildContext context) =>
+                      //           //             BottomNav()));
+                      //
+                      //           setState(() {});
+                      //         },
+                      //         //forceSearchOnZoomChanged: true,
+                      //         //automaticallyImplyAppBarLeading: false,
+                      //         //autocompleteLanguage: "ko",
+                      //         //region: 'au',
+                      //         //selectInitialPosition: true,
+                      //         // selectedPlaceWidgetBuilder: (_, selectedPlace, state, isSearchBarFocused) {
+                      //         //   print("state: $state, isSearchBarFocused: $isSearchBarFocused");
+                      //         //   return isSearchBarFocused
+                      //         //       ? Container()
+                      //         //       : FloatingCard(
+                      //         //           bottomPosition: 0.0, // MediaQuery.of(context) will cause rebuild. See MediaQuery document for the information.
+                      //         //           leftPosition: 0.0,
+                      //         //           rightPosition: 0.0,
+                      //         //           width: 500,
+                      //         //           borderRadius: BorderRadius.circular(12.0),
+                      //         //           child: state == SearchingState.Searching
+                      //         //               ? Center(child: CircularProgressIndicator())
+                      //         //               : RaisedButton(
+                      //         //                   child: Text("Pick Here"),
+                      //         //                   onPressed: () {
+                      //         //                     // IMPORTANT: You MUST manage selectedPlace data yourself as using this build will not invoke onPlacePicker as
+                      //         //                     //            this will override default 'Select here' Button.
+                      //         //                     print("do something with [selectedPlace] data");
+                      //         //                     Navigator.of(context).pop();
+                      //         //                   },
+                      //         //                 ),
+                      //         //         );
+                      //         // },
+                      //         // pinBuilder: (context, state) {
+                      //         //   if (state == PinState.Idle) {
+                      //         //     return Icon(Icons.favorite_border);
+                      //         //   } else {
+                      //         //     return Icon(Icons.favorite);
+                      //         //   }
+                      //         // },
+                      //       );
+                      //     },
+                      //   ),
+                      // );
 
-                                print(
-                                    selectedPlace.geometry.location.lat ?? "");
-                                print(
-                                    selectedPlace.geometry.location.lng ?? "");
+                      Navigator.push(context, FadeRoute(page: LoginUI()));
 
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.setString(
-                                    "long",
-                                    selectedPlace.geometry.location.lng
-                                        .toString());
-                                prefs.setString(
-                                    "lat",
-                                    selectedPlace.geometry.location.lat
-                                        .toString());
-                                prefs.setString("currentLoc",
-                                    selectedPlace.formattedAddress.toString());
-                                Navigator.of(context).pop();
-
-                                // Navigator.pushReplacement(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (BuildContext context) =>
-                                //             BottomNav()));
-
-                                setState(() {});
-                              },
-                              //forceSearchOnZoomChanged: true,
-                              //automaticallyImplyAppBarLeading: false,
-                              //autocompleteLanguage: "ko",
-                              //region: 'au',
-                              //selectInitialPosition: true,
-                              // selectedPlaceWidgetBuilder: (_, selectedPlace, state, isSearchBarFocused) {
-                              //   print("state: $state, isSearchBarFocused: $isSearchBarFocused");
-                              //   return isSearchBarFocused
-                              //       ? Container()
-                              //       : FloatingCard(
-                              //           bottomPosition: 0.0, // MediaQuery.of(context) will cause rebuild. See MediaQuery document for the information.
-                              //           leftPosition: 0.0,
-                              //           rightPosition: 0.0,
-                              //           width: 500,
-                              //           borderRadius: BorderRadius.circular(12.0),
-                              //           child: state == SearchingState.Searching
-                              //               ? Center(child: CircularProgressIndicator())
-                              //               : RaisedButton(
-                              //                   child: Text("Pick Here"),
-                              //                   onPressed: () {
-                              //                     // IMPORTANT: You MUST manage selectedPlace data yourself as using this build will not invoke onPlacePicker as
-                              //                     //            this will override default 'Select here' Button.
-                              //                     print("do something with [selectedPlace] data");
-                              //                     Navigator.of(context).pop();
-                              //                   },
-                              //                 ),
-                              //         );
-                              // },
-                              // pinBuilder: (context, state) {
-                              //   if (state == PinState.Idle) {
-                              //     return Icon(Icons.favorite_border);
-                              //   } else {
-                              //     return Icon(Icons.favorite);
-                              //   }
-                              // },
-                            );
-                          },
-                        ),
-                      );
+                      // Navigator.pushReplacement(
+                      //     context, MaterialPageRoute(builder: (context) => AddAddressUIStart()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Text(
-                        setLocation.toUpperCase(),
+                        "login".toUpperCase(),
                         style: Theme.of(context).textTheme.button,
                       ),
                     ),
@@ -283,23 +289,23 @@ class _InitialPageState extends State<InitialPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  haveAnAccount,
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-                InkWell(
-                    onTap: () {
-                      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                        systemNavigationBarColor:
-                            Colors.white, // navigation bar color
-                        statusBarColor: Colors.white, // status bar color
-                      ));
-                      Navigator.push(context, FadeRoute(page: LoginUI()));
-                    },
-                    child: Text(
-                      "login".toUpperCase(),
-                      style: txtButton,
-                    ))
+                // Text(
+                //   haveAnAccount,
+                //   style: Theme.of(context).textTheme.subtitle2,
+                // ),
+                // InkWell(
+                //     onTap: () {
+                //       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                //         systemNavigationBarColor:
+                //             Colors.white, // navigation bar color
+                //         statusBarColor: Colors.white, // status bar color
+                //       ));
+                //       Navigator.push(context, FadeRoute(page: LoginUI()));
+                //     },
+                //     child: Text(
+                //       "login".toUpperCase(),
+                //       style: txtButton,
+                //     ))
               ],
             )
           ],

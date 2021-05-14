@@ -38,7 +38,7 @@ class _FavouriteFragmentState extends State<FavouriteFragment> {
                 removeTop: true,
                 context: context,
                 child: ListView.builder(
-                  itemCount: restaurantList.length,
+                  itemCount: 0,
                   shrinkWrap: true,
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {

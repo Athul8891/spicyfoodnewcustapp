@@ -17,7 +17,7 @@ class _UpdateProfileState extends State<AddProfile> {
   TextEditingController _edtFirstController = new TextEditingController();
   TextEditingController _edtEmailController = new TextEditingController();
   bool isButtonEnabled=false;
-
+  var tap = false;
   bool isEmpty() {
     setState(() {
       if (_edtMobileController.text.length == 10 &&
@@ -117,11 +117,18 @@ class _UpdateProfileState extends State<AddProfile> {
                   child: ElevatedButton(
                     onPressed: isButtonEnabled
                         ? ()async {
+                      setState(() {
+                        tap=true;
+                      });
                       if (_edtMobileController.text != null) {
                            var rsp = await customerCreation(_edtMobileController.text,_edtFirstController.text,_edtEmailController.text,);
                             print("hhhhhh");
                             print(rsp);
                             if(rsp['token']!=null){
+
+                              setState(() {
+                                tap=false;
+                              });
                               SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                               prefs.setString("token", rsp['token'].toString());
@@ -130,14 +137,19 @@ class _UpdateProfileState extends State<AddProfile> {
 
                             }
                             else{
-
+                              setState(() {
+                                tap=false;
+                              });
                             }
                       } else {
 
                       }
                     }
                         : null,
-                    child: Text(
+                    child:tap==true?Text(
+                     "ADDING...",
+                      style: Theme.of(context).textTheme.button,
+                    ): Text(
                       isButtonEnabled
                           ? "Update".toUpperCase()
                           : "Enter mobile number & Email",

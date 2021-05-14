@@ -6,13 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/helper/networkutils.dart';
 
-Future<dynamic>storeDetailsApi(id)async{
+Future<dynamic>checkuserApi(num)async{
   Map<String, String> queryParameters = {
-    'store_id': id.toString(),
+    'mobile_number': num,
   };
 
   String queryString = Uri(queryParameters: queryParameters).query;
-  var requestUrl =  baseUrl+storeDetails + '?' + queryString;
+  var requestUrl =  baseUrl+check + '?' + queryString;
   var response = await http.get(requestUrl);
   var convertDataToJson = json.decode(response.body.toString());
   return convertDataToJson;

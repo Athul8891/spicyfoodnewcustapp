@@ -24,8 +24,8 @@ Future<dynamic>trendingListingApi(id)async{
 
   Map<String, String> queryParameters = {
     'trending_id': id.toString(),
-    'lat': "78.20251462608576",
-    'lon': "10.235284664638364",
+    'lat': strLat,
+    'lon': strLong,
 
   };
 

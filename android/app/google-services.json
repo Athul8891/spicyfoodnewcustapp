@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "724494152076",
-    "project_id": "spicyfoodnew",
-    "storage_bucket": "spicyfoodnew.appspot.com"
+    "project_number": "306956792469",
+    "project_id": "platinum-factor-313114",
+    "storage_bucket": "platinum-factor-313114.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:724494152076:android:84edc3aba05fbad6dea6a9",
+        "mobilesdk_app_id": "1:306956792469:android:74ef65accc98b277cc219c",
         "android_client_info": {
-          "package_name": "com.online.spicyfood"
+          "package_name": "com.spicyfood.online"
         }
       },
       "oauth_client": [
         {
-          "client_id": "724494152076-ep2jagaqc73bvv0hunm68o41561u2uj3.apps.googleusercontent.com",
+          "client_id": "306956792469-2qb0eldlsl38m3a6oitu3mgqpk5ta8hi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spicyfood.online",
+            "certificate_hash": "7dbf0c71c89b8605ee89e93e0b484f53bed44b64"
+          }
+        },
+        {
+          "client_id": "306956792469-kuv9gfcq6hg6o8cl169cgu6mdlbgc5vf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAtpnAxXu5QcCAdxF4eb3-2vG8Js8qd80U"
+          "current_key": "AIzaSyC47b-Fr60hqOqA6kKXJEOAIQ0BrJoUtlw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "724494152076-ep2jagaqc73bvv0hunm68o41561u2uj3.apps.googleusercontent.com",
+              "client_id": "306956792469-kuv9gfcq6hg6o8cl169cgu6mdlbgc5vf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

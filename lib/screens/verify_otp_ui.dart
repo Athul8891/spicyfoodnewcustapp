@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zomatoui/Api/CheckuserApi.dart';
 import 'package:zomatoui/Api/LoginApi.dart';
 import 'package:zomatoui/helper/common.dart';
 import 'package:zomatoui/helper/snackbar_toast_helper.dart';
@@ -121,6 +122,10 @@ class _VerifyOTPUIState extends State<VerifyOTPUI> with SingleTickerProviderStat
             isPressed =false ;
           });
 
+          setState(() {
+            isTaped=false;
+          });
+
           gotoHome();
 
 
@@ -137,6 +142,10 @@ class _VerifyOTPUIState extends State<VerifyOTPUI> with SingleTickerProviderStat
 
         } else {
           Fluttertoast.showToast(msg: "Sign in fail");
+
+          setState(() {
+            isTaped=false;
+          });
           this.setState(() {
             // isLoading = false;
           });
@@ -158,6 +167,12 @@ class _VerifyOTPUIState extends State<VerifyOTPUI> with SingleTickerProviderStat
   void _submitOTP() {
     /// get the `smsCode` from the user
     ///
+    ///
+    ///
+
+    setState(() {
+      isTaped=true;
+    });
     String smsCode = _otpController.text.toString().trim();
 
     /// when used different phoneNumber other than the current (running) device
@@ -446,20 +461,41 @@ class _VerifyOTPUIState extends State<VerifyOTPUI> with SingleTickerProviderStat
           //       context, MaterialPageRoute(builder: (context) => AddProfile()));
         });
 
-    var rsp = await  loginApi(widget.num);
-     if(rsp['response_code'].toString()=="SPC_002"){
-       SharedPreferences prefs =
-       await SharedPreferences.getInstance();
-       prefs.setString("token", rsp['token'].toString());
-       Navigator.pushReplacement(
-           context, MaterialPageRoute(builder: (context) => FragmentContainer()));
-     }
-     else if(rsp['response_code'].toString()=="SPC_001"){
-       Navigator.pushReplacement(
-           context, MaterialPageRoute(builder: (context) => AddProfile()));
-     }
-     else{
-       showToastError("Something went wrong !");
-     }
+
+    ///
+
+
+    var rsp = await  checkuserApi(widget.num.toString());
+    print("responseeeeeeee");
+    print(rsp);
+    print(_phoneNumberController.text.toString());
+    if(rsp['status_code'].toString()=="SPC_011"){
+
+
+      var rsp = await  loginApi(widget.num);
+      if(rsp['response_code'].toString()=="SPC_002"){
+        SharedPreferences prefs =
+        await SharedPreferences.getInstance();
+        prefs.setString("token", rsp['token'].toString());
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => FragmentContainer()));
+      }
+
+      else{
+        showToastError("Something went wrong !");
+      }
+    }
+
+    else{
+
+     Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => AddProfile()));
+
+    }
+
+
+    ///
+
+
   }
 }

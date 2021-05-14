@@ -11,10 +11,14 @@ import 'package:zomatoui/Api/trendingList.dart';
 import 'package:zomatoui/list_item/category_item.dart';
 import 'package:zomatoui/list_item/flat_item.dart';
 import 'package:zomatoui/list_item/veg_items.dart';
+import 'package:zomatoui/main.dart';
 import 'package:zomatoui/res/comida_icons_icons.dart';
 import 'package:zomatoui/resources.dart';
+import 'package:zomatoui/screens/add_address_ui.dart';
+import 'package:zomatoui/screens/add_address_ui_start.dart';
 import 'package:zomatoui/screens/offers_ui.dart';
 import 'package:zomatoui/screens/popular_cuisines_ui.dart';
+import 'package:zomatoui/screens/searchPage.dart';
 import 'package:zomatoui/screens/search_ui.dart';
 
 import 'helper/page_transation_fade_animation.dart';
@@ -36,6 +40,7 @@ class _HomeFragmentState extends State<HomeFragment>
   var strLong = "";
   var strLat = "";
   bool isCounter = false;
+  var _loading=true;
   int count = 0;
   var arrStoreList = [];
   var arrTrendingList = [];
@@ -170,6 +175,8 @@ class _HomeFragmentState extends State<HomeFragment>
       arrStoreList = rspstore['data'];
       arrVegList = rspveg['data'];
       arrTrendingList = rsptrend;
+
+      _loading=false;
     });
 
     print("storessssssssss");
@@ -180,38 +187,51 @@ class _HomeFragmentState extends State<HomeFragment>
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.blueGrey[50],
-        body: CustomScrollView(
+        body:_loading==true? Center(child: CircularProgressIndicator()): CustomScrollView(
           physics: BouncingScrollPhysics(),
           slivers: [
             SliverAppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.pin_drop_outlined,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      Text(
-                        "Home".toUpperCase(),
-                        style: TextStyle(
-                            fontSize: 16,
-                            letterSpacing: 0.6,
-                            color: Color(0xff333333),
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    strNowLoc,
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                ],
+              title: GestureDetector(
+                onTap: (){
+
+
+
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => AddAddressUIStart()));
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.pin_drop_outlined,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Expanded(
+                          child: Text(
+                            strNowLoc!=null?strNowLoc:"",
+                              overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                            style: TextStyle(
+                                fontSize: 16,
+                                letterSpacing: 0.6,
+                                color: Color(0xff333333),
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Text(
+                    //   strNowLoc!=null?strNowLoc:"",
+                    //   style: Theme.of(context).textTheme.subtitle2,
+                    // ),
+                  ],
+                ),
               ),
               snap: true,
               floating: true,
@@ -243,7 +263,7 @@ class _HomeFragmentState extends State<HomeFragment>
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          Navigator.push(context, FadeRoute(page: SearchUI()));
+                          Navigator.push(context, FadeRoute(page: SearchPage()));
                         });
                       },
                       child: Container(
@@ -359,68 +379,32 @@ class _HomeFragmentState extends State<HomeFragment>
               child: Padding(
                 padding: const EdgeInsets.only(top: 6.0),
                 child: Container(
-                  color: Colors.white,
+                  color: Colors.blue[20],
                   padding: EdgeInsets.all(8),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        height: 65,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: 30,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.green[50]),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    ComidaIcons.veg,
-                                    size: 12,
-                                    color: Colors.green[300],
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Text("Pure veg".toUpperCase(),
-                                      style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12,
-                                          letterSpacing: 0.6,
-                                          color: Color(0xff333333),
-                                          fontWeight: FontWeight.w500)),
-                                ],
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(context,
-                                    FadeRoute(page: PopularCuisines()));
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "SEE ALL",
-                                    style: boldTitleTxt,
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    size: 18,
-                                    color: accentColor,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      Text("We're operational till 7:30",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 15,
+                              letterSpacing: 0.6,
+                              color: Color(0xff333333),
+                              fontWeight: FontWeight.w900
+
+                          )),
+                      Text("Order early to avoid any delays in delivery",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 15,
+                              letterSpacing: 0.6,
+                              color: Color(0xff333333),
+                              fontWeight: FontWeight.normal
+
+                          )),
                     ],
                   ),
                 ),
@@ -488,14 +472,14 @@ class _HomeFragmentState extends State<HomeFragment>
                             print("daaaaaaaata");
                             print(item['store_sub_type']);
                             return FlatItem(
-                              id: item['id'],
-                              title: item['store_name'],
-                              thumb: item['logo'],
-                              cuisines: item['store_sub_type'],
-                              offer: item['offer_percentage'],
-                              rating: item['rating'],
-                              readyDuration: item['approximate_delivery_time'],
-                              isOpen: item['logo'],
+                              id: item['id'].toString(),
+                              title: item['store_name'].toString(),
+                              thumb: item['logo'].toString(),
+                              cuisines: item['store_sub_type'].toString(),
+                              offer: item['offer_percentage'].toString(),
+                              rating: item['rating'].toString(),
+                              readyDuration: item['approximate_delivery_time'].toString(),
+                              //isOpen: item['logo'],
                               isFav: false,
                             );
                           },

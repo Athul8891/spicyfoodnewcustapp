@@ -1,3 +1,5 @@
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zomatoui/Api/FirebaseApi.dart';
 import 'package:zomatoui/Api/codCheckout.dart';
 import 'package:zomatoui/helper/page_transation_fade_animation.dart';
@@ -10,14 +12,37 @@ import '../resources.dart';
 
 class PaymentUI extends StatefulWidget {
   final title;
+  final total;
 
 
-  PaymentUI({this.title});
+
+  PaymentUI({this.title,this.total});
   @override
   _PaymentUIState createState() => _PaymentUIState();
 }
 
 class _PaymentUIState extends State<PaymentUI> {
+
+  Razorpay _razorpay;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +75,7 @@ class _PaymentUIState extends State<PaymentUI> {
               ),
               tileColor: Colors.white,
               onTap: ()async{
-                var rsp = await  codCheckout();
+                var rsp = await  codCheckout("cod");
                 if(rsp['status_code']=="SPC_025"){
                   Navigator.push(context, FadeRoute(page: ThankYouUI(title: "Order Successful!",)));
                   var rsp =   deleteAllCart();
@@ -74,7 +99,8 @@ class _PaymentUIState extends State<PaymentUI> {
               ),
               tileColor: Colors.white,
               onTap: (){
-                Navigator.push(context, FadeRoute(page: TrackOrder()));
+                openCheckout();
+               // Navigator.push(context, FadeRoute(page: TrackOrder()));
               },
               title: Text(
                 card,
@@ -83,44 +109,92 @@ class _PaymentUIState extends State<PaymentUI> {
               trailing: Icon(Icons.keyboard_arrow_right,size: 16,),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top:0.8),
-            child: ListTile(
-              leading:  SvgPicture.asset(
-                  "assets/images/paytm.svg",
-                  width: 30,
-              ),
-              tileColor: Colors.white,
-              onTap: (){
-
-              },
-              title: Text(
-                paytm,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              trailing: Icon(Icons.keyboard_arrow_right,size: 16,),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top:0.8),
-            child: ListTile(
-              leading:  SvgPicture.asset(
-                  "assets/images/gpay.svg",
-                  width: 30,
-              ),
-              tileColor: Colors.white,
-              onTap: (){
-
-              },
-              title: Text(
-                gpay,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              trailing: Icon(Icons.keyboard_arrow_right,size: 16,),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top:0.8),
+          //   child: ListTile(
+          //     leading:  SvgPicture.asset(
+          //         "assets/images/paytm.svg",
+          //         width: 30,
+          //     ),
+          //     tileColor: Colors.white,
+          //     onTap: (){
+          //
+          //     },
+          //     title: Text(
+          //       paytm,
+          //       style: Theme.of(context).textTheme.headline6,
+          //     ),
+          //     trailing: Icon(Icons.keyboard_arrow_right,size: 16,),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top:0.8),
+          //   child: ListTile(
+          //     leading:  SvgPicture.asset(
+          //         "assets/images/gpay.svg",
+          //         width: 30,
+          //     ),
+          //     tileColor: Colors.white,
+          //     onTap: (){
+          //
+          //     },
+          //     title: Text(
+          //       gpay,
+          //       style: Theme.of(context).textTheme.headline6,
+          //     ),
+          //     trailing: Icon(Icons.keyboard_arrow_right,size: 16,),
+          //   ),
+          // ),
         ],
       ),
     );
+  }
+
+
+
+  void openCheckout() async {
+    var options = {
+      'key': 'rzp_test_3IXQThw7ZMCHmQ',
+      'amount': int.parse(widget.total) * 100,
+      'name': 'Spicy Food',
+      //'description': 'Fine T-Shirt',
+      'image':
+      'https://play-lh.googleusercontent.com/JJN6h9vrFZTQTysBKu8NkJEf9yF1HLfcZ_mf7ehkEPuxmbBG08ju8u1VJIOLoCDEc38=s180-rw',
+      'prefill': {'contact': "+9188888888", 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async{
+    var rsp = await  codCheckout("online");
+
+      Fluttertoast.showToast(
+          msg: "SUCCESS: " + response.paymentId, timeInSecForIosWeb: 4);
+      Navigator.push(context, FadeRoute(page: ThankYouUI(title: "Order Successful!",)));
+      var rsp2 =   deleteAllCart();
+
+    print(rsp);
+
+    Fluttertoast.showToast(
+        msg: "SUCCESS: " + response.paymentId, timeInSecForIosWeb: 4);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message,
+        timeInSecForIosWeb: 4);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIosWeb: 4);
   }
 }

@@ -47,6 +47,11 @@ class _SearchUIState extends State<SearchUI> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+
+
+
+
           Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: 12.0, vertical: 12),

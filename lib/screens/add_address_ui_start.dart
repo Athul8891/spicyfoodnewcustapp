@@ -10,19 +10,23 @@ import 'package:zomatoui/helper/snackbar_toast_helper.dart';
 import 'package:zomatoui/resources.dart';
 import 'package:flutter/material.dart';
 
-class AddAddressUI extends StatefulWidget {
+import 'fregment_container.dart';
+import 'login_ui.dart';
+
+class AddAddressUIStart extends StatefulWidget {
   @override
   _AddAddressUIState createState() => _AddAddressUIState();
 }
 
-class _AddAddressUIState extends State<AddAddressUI> {
+class _AddAddressUIState extends State<AddAddressUIStart> {
 
+
+  var tap = false;
   var currentLoc="";
   var currentLat="";
   var currentLon="";
   var subcurrentLoc="";
   PickResult selectedPlace;
-  var loading= false;
   TextEditingController unitController = TextEditingController();
   TextEditingController landmarkController = TextEditingController();
   GlobalKey<GoogleMapStateBase> _key = GlobalKey<GoogleMapStateBase>();
@@ -140,7 +144,12 @@ this. _getLocation();
                                   currentLon=selectedPlace.geometry.location.lng.toString();
                                   currentLoc=selectedPlace.formattedAddress.toString();
                                 });
-                                Navigator.of(context).pop();
+
+
+
+                                Navigator.pushReplacement(
+                                    context, MaterialPageRoute(builder: (context) => FragmentContainer()));
+
 
                                 // Navigator.pushReplacement(
                                 //     context,
@@ -379,30 +388,37 @@ this. _getLocation();
                       style: eleButton,
                       onPressed: () async {
                         setState(() {
-                          loading=true;
+                          tap=true;
                         });
                         var rsp =await addAdd(currentLat,currentLon,currentLoc,landmarkController.text.toString(),unitController.text.toString(),currentLoc.toString());
                         if(rsp=="SUCCESS"){
-
-                          setState(() {
-                            loading=false;
-                          });
                           showToastSuccess("Address added sucssesfully");
 
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           prefs.setString("long",
-                              selectedPlace.geometry.location.lng.toString());
+                             currentLon.toString());
                           prefs.setString("lat",
-                              selectedPlace.geometry.location.lat.toString());
+                              currentLat.toString());
                           prefs.setString("currentLoc",
-                              selectedPlace.formattedAddress.toString());
-                          Navigator.pop(context);
+                             currentLoc.toString());
+                         // Navigator.pop(context);
+
+
+                          Navigator.pushReplacement(
+                              context, MaterialPageRoute(builder: (context) => FragmentContainer()));
+                         //  Navigator.pushReplacement(
+                         //      context,
+                         //      MaterialPageRoute(
+                         //          builder: (BuildContext context) =>
+                         //              LoginUI()));
                         }else{
                           showToastError("Failed to add!");
+
                           setState(() {
-                            loading=false;
+                            tap=false;
                           });
+
                         }
                         print("adresssss");
                         print(rsp);
@@ -416,7 +432,7 @@ this. _getLocation();
                         //     selectedPlace.formattedAddress.toString());
 
                       },
-                      child: Text(loading==true?"SAVING...":
+                      child: Text(tap==true?"SAVING...":
                         "save and proceed".toUpperCase(),
                         style: Theme.of(context).textTheme.button,
                       ),

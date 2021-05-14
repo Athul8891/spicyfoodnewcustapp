@@ -12,5 +12,7 @@ final  review= 'review';
 final  profiledata= 'profile/';
 final  orderstatus= 'order-status';
 final  orderlist= 'order-gpd/';
+final  search= 'search/';
+final  check= 'check-user/';
 
 

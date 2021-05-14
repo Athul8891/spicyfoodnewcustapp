@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/helper/networkutils.dart';
 
 
-Future codCheckout() async {
+Future codCheckout(type) async {
   print("wrkibng");
 
 
@@ -13,7 +13,7 @@ Future codCheckout() async {
 
 
   Map<String, String> queryParameters = {
-    'order_type': "cod",
+    'order_type': type.toString(),
   };
 
   String queryString = Uri(queryParameters: queryParameters).query;

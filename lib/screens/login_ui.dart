@@ -19,7 +19,7 @@ class _LoginUIState extends State<LoginUI> with SingleTickerProviderStateMixin {
   ScrollController _scrollController;
   bool isButtonEnabled = false;
   var _isVisible;
-
+  var tap =false;
 
 
   TextEditingController _phoneNumberController = TextEditingController();
@@ -87,6 +87,9 @@ class _LoginUIState extends State<LoginUI> with SingleTickerProviderStateMixin {
 
   Future<void> _submitPhoneNumber() async {
     // pr.show();
+    setState(() {
+      tap=true;
+    });
     /// NOTE: Either append your phone number country code or add in the code itself
     /// Since I'm in India we use "+91 " as prefix `phoneNumber`
     String phoneNumber = "+91 " + _edtMobileController.text.toString().trim();
@@ -118,7 +121,9 @@ class _LoginUIState extends State<LoginUI> with SingleTickerProviderStateMixin {
         isPressed =false ;
       });
 
-
+      setState(() {
+        tap=false;
+      });
       Navigator.push(
           context,
           FadeRoute(
@@ -159,6 +164,10 @@ class _LoginUIState extends State<LoginUI> with SingleTickerProviderStateMixin {
       verificationFailed: (exception) {
         setState(() {
           isPressed =false ;
+        });
+
+        setState(() {
+          tap=false;
         });
         print("failed");
         print(exception);
@@ -254,10 +263,15 @@ class _LoginUIState extends State<LoginUI> with SingleTickerProviderStateMixin {
                             }
                           }
                         : null,
-                    child: Text(
+                    child:tap==true?Text(
+
+                      "SENDING..." ,
+                      style: Theme.of(context).textTheme.button,
+                    ): Text(
+
                       isButtonEnabled
                           ? "continue".toUpperCase()
-                          : "Enter mobile number",
+                          : "Enter mobile number" ,
                       style: Theme.of(context).textTheme.button,
                     ),
                     style: ButtonStyle(

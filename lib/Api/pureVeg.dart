@@ -23,8 +23,8 @@ Future<dynamic>pureVegApi()async{
 
 
   Map<String, String> queryParameters = {
-    'lat': "78.20251462608576",
-    'lon': "10.235284664638364",
+    'lat': strLat,
+    'lon': strLong,
     'pure_veg': "True",
   };
 

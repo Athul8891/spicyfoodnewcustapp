@@ -1,8 +1,11 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zomatoui/Api/profileApi.dart';
 import 'package:zomatoui/helper/page_transation_fade_animation.dart';
 import 'package:zomatoui/res/comida_icons_icons.dart';
 import 'package:zomatoui/resources.dart';
+import 'package:zomatoui/screens/login_ui.dart';
 import 'package:zomatoui/screens/manage_address.dart';
 import 'package:zomatoui/screens/offers_ui.dart';
 import 'package:zomatoui/screens/payment_ui.dart';
@@ -48,7 +51,9 @@ class _AccountFragmentState extends State<AccountFragment> {
 
 
 
-
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
 
 
 
@@ -223,8 +228,13 @@ class _AccountFragmentState extends State<AccountFragment> {
             padding: const EdgeInsets.only(top:8),
             child: ListTile(
               tileColor: Colors.white,
-              onTap: (){
-
+              onTap: ()async{
+                SharedPreferences prefs =
+                await SharedPreferences.getInstance();
+                prefs.setString("token", null);
+               _signOut();
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) =>  LoginUI()));
               },
               title: Text(
                 logout,

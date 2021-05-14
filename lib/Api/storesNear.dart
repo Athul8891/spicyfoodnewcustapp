@@ -20,11 +20,12 @@ Future<dynamic>storeNearApi()async{
   print("strLat");
   print(strLat);
     // id = prefs.getString('lat');
-
+  //    strLat="10.023286";
+  // strLong="76.311371";
 
   Map<String, String> queryParameters = {
-    'lat': "78.20251462608576",
-    'lon': "10.235284664638364",
+    'lat': strLat,
+    'lon': strLong,
     'store_type': "restaurant",
   };
 

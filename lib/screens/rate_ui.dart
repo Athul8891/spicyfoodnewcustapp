@@ -49,7 +49,7 @@ class _RateUIState extends State<RateUI> {
                       SizedBox(height: 40,),
                       Text(rateDelivery+" by",style: Theme.of(context).textTheme.subtitle2,),
                       SizedBox(height: 4,),
-                      Text("Vikas",style: appbar,),
+                    //  Text("Vikas",style: appbar,),
                       SizedBox(height: 16,),
                       RatingBar.builder(
                         initialRating: 3,

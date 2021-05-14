@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_id/device_id.dart';
 
 Future addToCart(varient_id,store_id,quantity,productid,storeid) async {
 
@@ -58,15 +59,16 @@ Future addToCart(varient_id,store_id,quantity,productid,storeid) async {
     return rslt ;
 }
 
-Future CartValueUpdate(varient_id,qty) async{
+Future CartValueUpdate(strId,varient_id,qty) async{
 
 
   var rslt = "WORKING";
-
+   print("varint");
+   print(varient_id);
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final User user = firebaseAuth.currentUser;
   final uid = user.uid;
-  await  FirebaseFirestore.instance.collection("cart").doc(uid).collection(uid).doc(varient_id).update(
+  await  FirebaseFirestore.instance.collection("cart").doc(uid).collection(strId).doc(varient_id).update(
       {
         // "id": uid.toString(),
 
@@ -120,20 +122,20 @@ Future updatedCart(doc,qty) async{
   return rslt ;
 }
 
-Future DeleteCart(doc) async{
+Future DeleteCart(doc,vid) async{
 
 
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final User user = firebaseAuth.currentUser;
   final uid = user.uid;
 
-  var rslt = "WORKING";
-  await  FirebaseFirestore.instance.collection("cart").doc(uid).collection(uid).doc(doc).delete().then((value){
-    rslt ="SUCCESS";
+  var rslt = "WORKINGDlt";
+  await  FirebaseFirestore.instance.collection("cart").doc(uid).collection(vid).doc(doc).delete().then((value){
+    rslt ="SUCCESSDlt";
     //Navigator.of(context).pop();
   })
       .catchError((error) {
-    rslt ="FAILURE";
+    rslt ="FAILUREDlt";
 
 
   });
@@ -189,7 +191,7 @@ Future addFav() async{
   var rslt = "WORKING";
   await  FirebaseFirestore.instance.collection('favorites').doc(uid).collection(uid).add(
       {
-        // "id": uid.toString(),
+       //  "id": uid.toString(),
        // "lat":strLat,
 
 
@@ -238,19 +240,23 @@ Future rmvFav(varient_id) async{
 }
 
 
-Future addAdd(lat,long,adress,landmark,unit) async{
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final User user = firebaseAuth.currentUser;
-  final uid = user.uid;
+Future addAdd(lat,long,adress,landmark,unit,full) async{
+  // final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  // final User user = firebaseAuth.currentUser;
+  // final uid = user.uid;
+
+  String device_id = await DeviceId.getID;
+  print(device_id);
 
   var rslt = "WORKING";
-  await  FirebaseFirestore.instance.collection('address').doc(uid).collection(uid).add(
+  await  FirebaseFirestore.instance.collection('address').doc(device_id).collection(device_id).add(
       {
         "lat": lat.toString(),
         "long":long.toString(),
         "adress":adress.toString(),
         "landmark":landmark.toString(),
         "unit":unit.toString(),
+        "full":full.toString(),
 
 
 
@@ -273,12 +279,15 @@ Future addAdd(lat,long,adress,landmark,unit) async{
 }
 
 Future updatedAdd(doc) async{
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final User user = firebaseAuth.currentUser;
-  final uid = user.uid;
+  // final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  // final User user = firebaseAuth.currentUser;
+  // final uid = user.uid;
 
+
+  String device_id = await DeviceId.getID;
+  print(device_id);
   var rslt = "WORKING";
-  await  FirebaseFirestore.instance.collection("address").doc(uid).collection(uid).doc(doc).update(
+  await  FirebaseFirestore.instance.collection("address").doc(device_id).collection(device_id).doc(doc).update(
       {
         // "id": uid.toString(),
 
@@ -304,13 +313,14 @@ Future updatedAdd(doc) async{
 
 Future dltAdd(varient_id) async{
 
-
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final User user = firebaseAuth.currentUser;
-  final uid = user.uid;
+  String device_id = await DeviceId.getID;
+  print(device_id);
+  // final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  // final User user = firebaseAuth.currentUser;
+  // final uid = user.uid;
 
   var rslt = "WORKING";
-  await  FirebaseFirestore.instance.collection("address").doc(uid).collection(uid).doc(varient_id).delete().then((value){
+  await  FirebaseFirestore.instance.collection("address").doc(device_id).collection(device_id).doc(varient_id).delete().then((value){
     rslt ="SUCCESS";
     //Navigator.of(context).pop();
   })

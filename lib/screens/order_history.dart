@@ -49,9 +49,15 @@ class _OrderHistoryState extends State<OrderHistory> {
           elevation: 1,
           automaticallyImplyLeading: false,
         ),
-        body: (pgLoad == true)
+        body:
+
+        (pgLoad == true)
             ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
+            :  (arrList.length==0)
+            ? Center(child: Text("No History Found!"))
+            :
+
+        ListView.builder(
                 //itemCount: 2,
                 physics: ClampingScrollPhysics(),
                 shrinkWrap: true,
@@ -64,14 +70,15 @@ class _OrderHistoryState extends State<OrderHistory> {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          FadeRoute(
-                            page: OrderDetailUI(
-                              title: "Order #451245",
-                            ),
-                          ),
-                        );
+
+                        // Navigator.push(
+                        //   context,
+                        //   FadeRoute(
+                        //     page: OrderDetailUI(
+                        //       title: "Order #451245",
+                        //     ),
+                        //   ),
+                        // );
                       },
                       child: Container(
                         color: Colors.white,
@@ -85,12 +92,12 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   Expanded(
                                     flex: 1,
                                     child: Text(
-                                      item['store_name'].toString(),
+                                      item['id'].toString(),
                                       style: appbar,
                                     ),
                                   ),
                                   Text(
-                                    item['customer_status'].toString(),
+                                    item['status'].toString(),
                                     style:
                                         Theme.of(context).textTheme.headline6,
                                   ),
@@ -116,16 +123,14 @@ class _OrderHistoryState extends State<OrderHistory> {
                                 style: Theme.of(context).textTheme.headline6,
                               ),
                               Divider(),
-                              Text(
-                                item['items'][0].toString() +
-                                    " x " +
-                                    item['items'][0].toString(),
-                                style: Theme.of(context).textTheme.subtitle2,
+                              OrderItem(item['items']),
+                              SizedBox(
+                                height: 5,
                               ),
-                              Text(
-                                deliveryDate,
-                                style: subtitleTxt,
-                              ),
+                              // Text(
+                              //   deliveryDate,
+                              //   style: subtitleTxt,
+                              // ),
                               Row(
                                 children: [
                                   Expanded(
@@ -183,5 +188,28 @@ class _OrderHistoryState extends State<OrderHistory> {
                   );
                 },
               ));
+  }
+
+
+
+  OrderItem(var items4) {
+    print("itemssssss");
+
+     print(items4);
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+
+      itemCount: items4 != null ? items4.length : 0,
+
+      itemBuilder: (context, index) {
+        final item = items4 != null ? items4 : null;
+        return Text(
+          item[index]['name'].toString() ,
+          style: Theme.of(context).textTheme.subtitle2,
+        );
+      },
+    );
   }
 }

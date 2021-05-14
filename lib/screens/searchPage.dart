@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:zomatoui/Api/FirebaseApi.dart';
+import 'package:zomatoui/Api/SearchApi.dart';
 import 'package:zomatoui/Api/StoreDetailsApi.dart';
 import 'package:zomatoui/Api/uploadCart.dart';
 import 'package:zomatoui/components/animated_alert_dialog.dart';
@@ -22,10 +23,10 @@ import 'package:zomatoui/screens/search_ui.dart';
 
 typedef Widget IndexedWidgetBuilder(BuildContext context, int index);
 
-class RestaurantMenu extends StatefulWidget {
+class SearchPage extends StatefulWidget {
   final id;
 
-  RestaurantMenu({
+  SearchPage({
     this.id,
   });
 
@@ -33,11 +34,13 @@ class RestaurantMenu extends StatefulWidget {
   _RestaurantMenuState createState() => _RestaurantMenuState();
 }
 
-class _RestaurantMenuState extends State<RestaurantMenu> {
-  var PgLoad = true;
+class _RestaurantMenuState extends State<SearchPage> {
+  final searchController = TextEditingController();
+
+  var PgLoad = false;
   ScrollController _scrollController;
   bool lastStatus = true;
-  var loading = true;
+  var loading = false;
   bool isExpanded = true;
 
   bool isCartVisible = false;
@@ -105,8 +108,8 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
             Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
         axis: scrollDirection);
     aController.addListener(_scrollListenerL);
-    this.getStores();
-    this.getAllCartItems();
+
+    //this.getAllCartItems();
   }
 
   @override
@@ -116,189 +119,64 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
     super.dispose();
   }
 
-  Future<String> getStores() async {
-    foodItems.clear();
-    var rspstore = await storeDetailsApi(widget.id);
+  Future<String> getStores(data) async {
+    arrList.clear();
+    setState(() {
+      loading = true;
+    });
+    var rspstore = await searchApi(data);
     print("resposeeeeeeeeee");
     print(rspstore);
-    if (rspstore['store'] != null) {
-      setState(() {
-        storeId = rspstore['store']['id'];
-        storeName = rspstore['store']['store_name'];
-        storeType = rspstore['store']['store_sub_type'];
-        storeRating = rspstore['store']['rating'];
-        storeTime = rspstore['store']['approximate_delivery_time'];
-        storeOffer = rspstore['store']['offer_percentage'];
-        iSstoreOffer = rspstore['store']['store_offer'];
-
-        arrList = rspstore['category'];
-        arrCouponList = rspstore['coupouns'];
-        print('arrList');
-        print(storeName);
-        // if (arrList != null) {
-        //   for (var value in arrList) {
-        //     if (value['products'] != null) {
-        //       final name = value['products'];
-        //       print("name");
-        //       print(name);
-        //       //arrImages.add(NetworkImage(imgConst + name));
-        //     }
-        //
-        //
-        //   }
-        //
-        //
-        //
-        // }
-
-        for (var i = 0; i < arrList.length; i++) {
-          print("valueeeee");
-          print(arrList[i]['name']);
-          arrProdList.add(arrList[i]['products']);
-
-          var dummy = [
-            {'qty': 0}
-          ];
-          print("valueeeee2");
-          print(arrProdList);
-          print("valueeeee2");
-
-          if (arrProdList.length != 0) {
-            print(arrList[i]['products'][0]['variation']);
-            variationList.add(arrList[i]['products'][0]['variation']);
-            // variationList2.add(arrList[i]['products'][0]['variation']);
-            print("fffffffff");
-            print(arrList[i]['products']);
-            print("fffffffff");
-
-            //   productList.add([arrList[i]['products'][0]['name'],arrList[i]['products'][0]['description'],arrList[i]['products'][0]['image'],arrList[i]['products'][0]['veg'],arrList[i]['products'][0]['in_stock'],arrList[i]['products'][0]['price']]);
-            foodItems.add(FoodItem(arrList[i]['name'], arrList[i]['products']));
-            loading=false;
-
-            // for (var value in arrList[i]['products']) {
-            //
-            //
-            //
-            //   var data = {"qty":0};
-            //   qty.add(data);
-            //
-            // }
-            print("daaaaaaata");
-            print(arrProdList.length);
-
-          }
-          print("variationnnn");
-          print(variationList);
-          print("daaaaaaata");
-          print(arrProdList.length);
-          // arrProdList.addAll(arrList[i]['products']);
-
-          // print(arrProdList[0]['name']);
-
-          // FoodItem(this.title, this.contents, this.discription,this.price,this.image);
-
-          //arrProdList.clear();
-        }
 
 
 
-        // for (var value in arrList) {
-        //   final name = value['products']['name'];
-        //   final disc = value['products']['description'];
-        //   final rate = value['products']['price'];
-        //   final qty = "0";
-        //   final veg = value['products']['veg'];
-        //   final store = value['products']['store'];
-        //  var data = {"name":name,'description':disc};
-        //   foodItems.add(FoodItem(value['name'], data.));
-        //   print(arrImages);
-        // }
-        //  print("daaaaaaata");
-        // print(arrProdList.length);
-        //
-        // foodItems.add(FoodItem("title", "contents", icon));
-      });
-    }
     setState(() {
-      PgLoad = false;
+      arrList=rspstore;
+
+   //   variationList=rspstore['variation'];
+
+      for (var i = 0; i < arrList.length; i++) {
+        print("valueeeee");
+      //  print(arrList[i]['name']);
+        variationList.add(arrList[i]['variation']);
+         print(variationList);
+
+      }
+    });
+
+
+    setState(() {
+      loading = false;
     });
   }
 
-  void getAllCartItems() async {
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    final User user = firebaseAuth.currentUser;
-    final uid = user.uid;
 
-    FirebaseFirestore.instance
-        .collection("cart")
-        .doc(uid)
-        .collection(widget.id)
-        .get()
-        .then((QuerySnapshot querySnapshot) => {
-              querySnapshot.docs.forEach((doc) {
-                // print("doc");
-                setState(() {
-                  cartLength = querySnapshot.docs.length.toString();
-                  if (int.parse(cartLength.toString()) > 0) {
-                    isCartVisible = true;
-                  }
-                  cartItems.add({
-                    'variation_id': doc.get('variation_id'),
-                    'quantity': int.parse(doc.get('quantity').toString())
-                  });
-                });
-              })
-            })
-        .whenComplete(() async {
-      print("cartLi44st");
-      print(cartItems);
-      var rsp = await cartUpload(widget.id.toString(), cartItems);
-      print("rsppppppp");
-      print(rsp);
-      setState(() {
-        //arrListCart = rsp['cart']['cartitem'];
-        itemTotal = rsp['cart']['final_total'].toString();
-        print("totalsss");
-
-        print(itemTotal);
-        print(cartLength);
-        //   print(arrList['variation']);
-      });
-      // for (var i = 0; i < arrList['variation'].length; i++) {
-      //   print(arrList[i]['products']['variation']);
-      // }
-    });
-
-    setState(() {
-      PgLoad = false;
-    });
-  }
 
   Future<bool> _onBackPressed(storeId) {
     return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Replace cart item?'),
-            content: new Text(
-                'If Your cart contains other dishes. It will discard the selection of added dishes!'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(false),
-                child: Text("NO"),
-              ),
-              SizedBox(height: 16),
-              new GestureDetector(
-                onTap: () async {
-                  var rsp = deleteAllCart();
-                  if (rsp == "SUCCESS") {
-                    showToastSuccess("Cart cleared!");
-                  }
-                },
-                child: Text("YES"),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Replace cart item?'),
+        content: new Text(
+            'If Your cart contains other dishes. It will discard the selection of added dishes!'),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(false),
+            child: Text("NO"),
           ),
-        ) ??
+          SizedBox(height: 16),
+          new GestureDetector(
+            onTap: () async {
+              var rsp = deleteAllCart();
+              if (rsp == "SUCCESS") {
+                showToastSuccess("Cart cleared!");
+              }
+            },
+            child: Text("YES"),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -307,399 +185,221 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.blueGrey[50],
-        body: loading == true
-            ? Center(child: CircularProgressIndicator())
-            : CustomScrollView(
-                controller: aController,
-                slivers: [
-                  SliverAppBar(
-                    centerTitle: false,
-                    titleSpacing: 0.0,
-                    actions: <Widget>[
-                      IconButton(
-                          icon: Icon(
-                            isAdd
-                                ? FlutterIcons.favorite_mdi
-                                : FlutterIcons.favorite_border_mdi,
-                            size: 20,
-                            color: isAdd ? Colors.red : Colors.grey[700],
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isAdd = !isAdd;
-                            });
-                          }),
-                      IconButton(
-                          icon: Icon(
-                            ComidaIcons.search,
-                            size: 18,
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                                context, FadeRoute(page: SearchUI()));
-                          }),
-                      SizedBox(
-                        width: 8,
-                      )
-                    ],
-                    floating: false,
-                    pinned: true,
-                    elevation: 1,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      background: Container(
-                        decoration: BoxDecoration(color: Colors.white),
-                      ),
-                    ),
-                    title: AnimatedOpacity(
-                        opacity: !isShade ? 0.0 : 1.0,
-                        duration: Duration(milliseconds: 300),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(storeName != null ? storeName : "",
-                                style: boldTitleTxt),
-                            // widget.isOpen?Text(widget.readyDuration, style: Theme.of(context).textTheme.subtitle2)
-                            //     :Text(
-                            //   "Opens at 08:00 AM",
-                            //   style: TextStyle(
-                            //       color: Colors.red[700],
-                            //       fontSize: 12
-                            //   ),
-                            // ),
-                          ],
-                        )),
-                    backgroundColor: Colors.white,
-                  ),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(storeName != null ? storeName : "",
-                                style: appbar),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              storeType,
-                              style: Theme.of(context).textTheme.subtitle2,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              children: [
-                                RatingBar.builder(
-                                    initialRating: 3,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 12,
-                                    unratedColor: Colors.grey[300],
-                                    itemPadding: EdgeInsets.only(right: 1.0),
-                                    itemBuilder: (context, _) => Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        ),
-                                    onRatingUpdate: null),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  "${0.0}",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      letterSpacing: 0.6,
-                                      color: Colors.grey,
-                                      decorationThickness: 3,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.watch_later_outlined,
-                                      size: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      storeTime.toString() + " mins",
-                                      style:
-                                          Theme.of(context).textTheme.subtitle2,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 16,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.directions_outlined,
-                                      size: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      "Live Tracking",
-                                      style:
-                                          Theme.of(context).textTheme.subtitle2,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            // widget.isOpen?SizedBox(height: 0,):Padding(
-                            //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            //   child: Text(
-                            //     "Opens at 08:00 AM",
-                            //     style: TextStyle(
-                            //         color: Colors.red[700],
-                            //         fontSize: 12
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.only(top: 0.5),
-                    sliver: SliverToBoxAdapter(
-                      child: Container(
-                        height: 58,
-                        color: Colors.white,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          //itemCount: 4,
-                          padding: EdgeInsets.only(left: 8),
-                          scrollDirection: Axis.horizontal,
-                          itemCount:
-                              arrCouponList != null ? arrCouponList.length : 0,
-                          itemBuilder: (context, index) {
-                            final item = arrCouponList != null
-                                ? arrCouponList[index]
-                                : null;
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 8.0, top: 8, bottom: 8),
-                              child: ClipPath(
-                                clipper: MovieTicketClipper(),
-                                child: ElevatedButton(
-                                  style: offerButton,
-                                  onPressed: () {},
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(item['title'].toString(),
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 12,
-                                              letterSpacing: 0.3,
-                                              wordSpacing: 0.6,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600)),
-                                      Text(
-                                          "use code " +
-                                              item['code']
-                                                  .toString()
-                                                  .toUpperCase(),
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 10,
-                                              letterSpacing: 1.2,
-                                              wordSpacing: 0.5,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w300)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  // SliverPadding(
-                  //   padding: const EdgeInsets.only(top: 6),
-                  //   sliver: SliverList(
-                  //     delegate: SliverChildListDelegate([
-                  //       Container(
-                  //         color: Colors.white,
-                  //         child: Padding(
-                  //           padding: const EdgeInsets.all(16.0),
-                  //           child: Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               Container(
-                  //                 height: 30,
-                  //                 width: 100,
-                  //                 decoration: BoxDecoration(
-                  //                     borderRadius: BorderRadius.circular(20),
-                  //                     color:
-                  //                         Colors.green[100].withOpacity(0.3)),
-                  //                 child: Row(
-                  //                   mainAxisAlignment: MainAxisAlignment.center,
-                  //                   children: [
-                  //                     Icon(
-                  //                       ComidaIcons.veg,
-                  //                       size: 12,
-                  //                       color: Colors.green[300],
-                  //                     ),
-                  //                     SizedBox(
-                  //                       width: 6,
-                  //                     ),
-                  //                     Text("Pure veg".toUpperCase(),
-                  //                         style: TextStyle(
-                  //                             fontFamily: 'Poppins',
-                  //                             fontSize: 12,
-                  //                             letterSpacing: 0.6,
-                  //                             color: Color(0xff333333),
-                  //                             fontWeight: FontWeight.w500)),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ]),
-                  //   ),
-                  // ),
-                  SliverToBoxAdapter(
-                    child: MediaQuery.removePadding(
-                      context: context,
-                      removeTop: true,
-                      child: ListView.builder(
-                        scrollDirection: scrollDirection,
-                        //  itemCount: foodItems.length,
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: arrList != null ? arrList.length : 0,
-                        itemBuilder: (context, index) {
-                          final item = arrList != null ? arrList[index] : null;
-                          return AutoScrollTag(
-                            // key: ValueKey(i),
-                            controller: aController,
-                            // index: i,
-                            child: ExpansionTile(
-                              collapsedBackgroundColor: Colors.white,
-                              backgroundColor: Colors.white,
-                              initiallyExpanded: isExpanded,
-                              title: new Text(
-                                item['name'].toString(),
-                                style: appbar,
-                              ),
-                              children: <Widget>[
-                                new Column(
-                                  children: _buildExpandableContent(
-                                      foodItems[index], index),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-                shrinkWrap: true,
-              ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 40.0),
-          child: SizedBox(
-            width: 110,
-            child: ElevatedButton(
-              style: menuButton,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => FunkyOverlay(
-                    widget: setupAlertDialogContainer(),
-                    title: "",
-                  ),
-                );
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    FlutterIcons.chef_hat_mco,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    "Menu".toUpperCase(),
-                    style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        letterSpacing: 1,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
-                  )
-                ],
-              ),
-            ),
+
+        appBar: AppBar(
+          title: Text(
+            "Search",
+            style: appbar,
           ),
-        ),
-        bottomNavigationBar: AnimatedContainer(
-          duration: Duration(milliseconds: 800),
-          height: isCartVisible ? 65 : 0,
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 45,
-                child: ElevatedButton(
-                  style: addToCartButton,
-                  onPressed: () {
-                    Navigator.push(context, FadeRoute(page: CartUI(id: widget.id,)));
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        cartLength + " Items | ₹" + itemTotal.toUpperCase(),
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                      Text(
-                        "view cart >".toUpperCase(),
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                    ],
+          elevation: 1,
+          bottom: PreferredSize(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  height: 47.8,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30.0),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black26, blurRadius: 2)
+                      ]),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: TextField(
+                    controller: searchController,
+                     onChanged: (searchController) async{
+                       var search = searchController.toString();
+
+                       getStores(search);
+
+                       },
+                    decoration: InputDecoration(
+                        icon: Icon(ComidaIcons.search,size: 18,),
+                        hintText: "Search",
+                        border: InputBorder.none,
+                        hintStyle: Theme.of(context).textTheme.subtitle2
+                    ),
+
                   ),
                 ),
               ),
+              preferredSize: Size.fromHeight(60.8)),
+        ),
+        body:
+
+        loading == true
+            ? Center(child: CircularProgressIndicator())
+            :
+
+
+        CustomScrollView(
+          controller: aController,
+          slivers: [
+
+
+            SliverToBoxAdapter(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: ListView.builder(
+                  scrollDirection: scrollDirection,
+                  //  itemCount: foodItems.length,
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: arrList != null ? arrList.length : 0,
+                  itemBuilder: (context, index) {
+                    print("variationList.length");
+                    print(arrList.length);
+                    final item = arrList != null ? arrList[index] : null;
+                    return   Container(
+                      height: 120,
+                      width: width,
+                      child: Row(
+                        children: [
+                          Stack(
+                            children: [
+                              Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                              ImgBaseUrl+item['image'].toString()),
+                                          fit: BoxFit.cover),
+                                    )),
+                              ),
+
+                            ],
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item['name'].toString(), style: boldTitleTxt),
+                                  SizedBox(height: 6,),
+                                  Text(
+                                    item['description'].toString(),
+                                    style: Theme.of(context).textTheme.subtitle2,
+                                  ),
+                                  SizedBox(height: 2,),
+                                  Text(
+                                    "₹" +item['price'].toString(),
+                                    style: Theme.of(context).textTheme.subtitle2,
+                                  ),
+                                  SizedBox(height: 4,),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        size: 14,
+                                        color: Colors.yellow[800],
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        "4.2 / 5",
+                                        style: Theme.of(context).textTheme.subtitle2,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            flex: 1,
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-        ));
+          ],
+          shrinkWrap: true,
+        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // floatingActionButton: Padding(
+        //   padding: const EdgeInsets.only(bottom: 40.0),
+        //   child: SizedBox(
+        //     width: 110,
+        //     child: ElevatedButton(
+        //       style: menuButton,
+        //       onPressed: () {
+        //         showDialog(
+        //           context: context,
+        //           builder: (_) => FunkyOverlay(
+        //             widget: setupAlertDialogContainer(),
+        //             title: "",
+        //           ),
+        //         );
+        //       },
+        //       child: Row(
+        //         children: [
+        //           Icon(
+        //             FlutterIcons.chef_hat_mco,
+        //             size: 16,
+        //             color: Colors.white,
+        //           ),
+        //           SizedBox(
+        //             width: 8,
+        //           ),
+        //           Text(
+        //             "Menu".toUpperCase(),
+        //             style: TextStyle(
+        //                 fontFamily: 'Poppins',
+        //                 fontSize: 16,
+        //                 letterSpacing: 1,
+        //                 color: Colors.white,
+        //                 fontWeight: FontWeight.w600),
+        //           )
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // bottomNavigationBar: AnimatedContainer(
+        //   duration: Duration(milliseconds: 800),
+        //   height: isCartVisible ? 65 : 0,
+        //   child: Container(
+        //     color: Colors.white,
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(8.0),
+        //       child: SizedBox(
+        //         width: MediaQuery.of(context).size.width,
+        //         height: 45,
+        //         child: ElevatedButton(
+        //           style: addToCartButton,
+        //           onPressed: () {
+        //             Navigator.push(context, FadeRoute(page: CartUI(id: widget.id,)));
+        //           },
+        //           child: Row(
+        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //             crossAxisAlignment: CrossAxisAlignment.center,
+        //             children: [
+        //               Text(
+        //                 cartLength + " Items | ₹" + itemTotal.toUpperCase(),
+        //                 style: Theme.of(context).textTheme.button,
+        //               ),
+        //               Text(
+        //                 "view cart >".toUpperCase(),
+        //                 style: Theme.of(context).textTheme.button,
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // )
+
+    );
   }
 
   var log = Logger();
@@ -941,7 +641,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                               content['store']
                                                   .toString(),content['quantity'].toString(),i);
                                         } else {
-                                         // content['quantity']++;
+                                          // content['quantity']++;
                                           isCounter = false;
                                           isCartVisible = false;
                                         }
@@ -986,8 +686,8 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
       print(content);
     }
 
-      // print(content);
-      // print("content");
+    // print(content);
+    // print("content");
 
 
 
@@ -1010,9 +710,9 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         builder: (context) => SingleChildScrollView(
-              controller: ModalScrollController.of(context),
-              child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setModelState) {
+          controller: ModalScrollController.of(context),
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModelState) {
                 return Container(
                   height: 520,
                   child: Column(
@@ -1045,9 +745,9 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                         vertical: 12.0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         veg(),
                                         SizedBox(
@@ -1055,7 +755,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                         ),
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               name,
@@ -1080,7 +780,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                   Text(
                                     "Please select any one option",
                                     style:
-                                        Theme.of(context).textTheme.subtitle2,
+                                    Theme.of(context).textTheme.subtitle2,
                                   ),
 
                                   Container(
@@ -1088,7 +788,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                       shrinkWrap: true,
                                       primary: false,
                                       itemCount:
-                                          varitem != null ? varitem.length : 0,
+                                      varitem != null ? varitem.length : 0,
                                       itemBuilder: (context, index) {
                                         final item = varitem != null
                                             ? varitem[index]
@@ -1142,7 +842,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                   // ),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "",
@@ -1157,7 +857,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                           elevation: 1,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(4),
+                                            BorderRadius.circular(4),
                                           ),
                                           child: Row(
                                             children: [
@@ -1266,13 +966,13 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                   ),
                 );
               }),
-            ));
+        ));
   }
 }
 
 class FoodItem {
   final String title;
-  List<dynamic> contents = [];
+  List contents = [];
 
   //final IconData icon;
 
